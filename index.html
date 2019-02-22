@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ja">
+<head>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta charset="utf-8">
+	
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="msapplication-config" content="./img/browserconfig.xml">
+	<meta name="theme-color" content="#ffffff">
+	<link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
+	<link rel="manifest" href="./img/site.webmanifest">
+	<link rel="mask-icon" href="./img/safari-pinned-tab.svg" color="#5bbad5">
+	<link rel="shortcut icon" href="./img/favicon.ico">
+    
+	<link rel="stylesheet" href="./css/style.css">
+	<link rel="stylesheet" href="./css/normalize.min.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    
+	<link rel="manifest" href="./manifest.json">
+	<script src="./src/worker.js"></script>
+
+	<title>MONI ToDo App</title>
+</head>
+<body>
+	<noscript>
+		<div class="no_script">
+			<p>Javascriptを有効にしてください。<br>Please enable JavaScript</p>
+		</div>
+	</noscript>
+	<header>
+		<div class="wrapper">
+			<h1>MONI ToDo App</h1>
+		</div>
+	</header>
+
+	<div id="app">
+        <div class="menu_box">
+            <div class="wrapper page_one">
+                <div class="menu_btn">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="change_log mb40">
+                    <p class="cap"><i class="fas fa-history"></i>更新履歴</p>
+                    <ul>
+                        <li><p><span>2019.02.22</span>リリースしました。</p></li>
+                    </ul>
+                </div>
+                <div class="my_profile mb40">
+                    <p class="cap"><i class="fas fa-link"></i>外部リンク</p>
+                    <ul>
+                        <li><a href="https://twitter.com/moni_yoshimochi" target="_blank"><i class="fab fa-twitter"></i>由持もにTwitter</a></li>
+                        <li><a href="https://www.youtube.com/channel/UCup2TSNKxDM_SNCF9xuXSNg" target="_blank"><i class="fab fa-youtube"></i>由持もにYoutube</a></li>
+                        <li><a href="http://amhikoushiki.php.xdomain.jp/" target="_blank"><i class="fas fa-file-alt"></i>由持もに非公式サイト</a></li>
+                    </ul>
+                </div>
+                <div class="caution mb40">
+                    <p class="cap"><i class="fas fa-exclamation-circle"></i>注意事項</p>
+                    <p class="mb20">当ToDoアプリ(ウェブサイト)は由持もに非公式です。</p>
+                    <p class="mb20">当ToDoアプリは著作権法第32条に基づいております。<br>著作権は権利者様側へ帰属いたしますため、画像の転載・流用等はご遠慮下さい。</p>
+                    <p>当アプリに関してなにかございましたら以下までご連絡ください。</p>
+                </div>
+                <div  class="contact">
+                    <p class="cap"><i class="fas fa-tools"></i>なにかあれば</p>
+                    <a href="https://twitter.com/f_low91" target="_blank"><i class="fab fa-twitter"></i>制作者Twiiter</a>
+                </div>
+            </div>
+        </div>
+        
+		<main>
+			<div class="wrapper">
+                <div class="menu_btm_area mb20">
+                    <div class="left_box">
+                        <p>（{{ computedTodos.length }} 件を表示）</p>
+                    </div>
+                    <div class="right_box">
+                        <div class="menu_btn">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                    </div>
+                </div>
+            
+				<ul class="list_area">
+					<li v-for="item in computedTodos" v-bind:key="item.id" v-bind:class="{done:item.state}">
+                        <div class="status">
+                            <button v-on:click="doChangeState(item)">
+                                <p>{{ labels[item.state] }}</p>
+                            </button>
+                        </div>
+						<div class="text_btx">
+							<p>{{ item.comment }}</p>
+						</div>
+						<div class="check">
+							<button type="button" v-on:click="doRemove(item)"><i class="fas fa-times-circle"></i></button>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="send_area">
+				<div class="wrapper">
+					<form class="content_box" v-on:submit.prevent="doAdd">
+						<input type="text" placeholder="ここにタスクを入力" ref="comment">
+						<div class="send_btn"><button type="submit"><i class="fas fa-plus-circle"></i></button></div>
+					</form>
+				</div>
+			</div>
+		</main>
+
+		<footer>
+			<div class="btn_area">
+				<ul class="content_box" >
+					<li v-for="label in options">
+                        <input type="radio" v-model="current" v-bind:value="label.value" v-bind:id="label.text">
+                        <label v-bind:for="label.text">
+                            <i v-bind:class="label.text2"></i>
+                            <p>{{ label.text }}</p>
+                        </label>
+					</li>
+				</ul>
+			</div>
+		</footer>
+	</div>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/vue.router/2.0.1/vue-router.min.js"></script>
+	<script src="./src/main.js"></script>
+    <script>
+        $('.menu_btn').click(function(){
+            $('.menu_btn').toggleClass('active');
+            $('.menu_box').fadeToggle(300);
+        });
+    </script>
+</body>
+</html>
